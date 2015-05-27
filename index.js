@@ -34,10 +34,13 @@ function request(options, callback) {
 
   var options_onResponse = options.onResponse; // Save this for later.
 
-  if(typeof options === 'string')
+  if(typeof options === 'string'){
     options = {'uri':options};
-  else
-    options = JSON.parse(JSON.stringify(options)); // Use a duplicate for mutating.
+  }else{
+    var cloned = function(){}
+    cloned.prototype = options;
+    options = new cloned();
+  }
 
   options.onResponse = options_onResponse // And put it back.
 
@@ -292,7 +295,9 @@ request.defaults = function(options, requester) {
       if(typeof params === 'string')
         params = {'uri': params};
       else {
-        params = JSON.parse(JSON.stringify(params));
+        var cloned = function(){}
+        cloned.prototype = params;
+        params = new cloned();
       }
       for (var i in options) {
         if (params[i] === undefined) params[i] = options[i]
